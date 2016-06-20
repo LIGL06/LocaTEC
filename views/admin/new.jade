@@ -1,0 +1,26 @@
+extends ../layout
+block content
+  .col-md-4.col-md-offset-4
+    h1.text-center #[strong #{title}]
+    form(method='POST', action='/admin/nuevo', enctype='multipart/form-data', style='margin-top:100px')
+      .form-group
+        label(for='objectid') Folio
+        input.form-control(type='number', name='objectid', placeholder='Folio de objeto', id='objetctid')
+      .form-group
+        label(for='descripcion') Descripción
+        input.form-control(type='text', name='descripcion', placeholder='Decripción del Objeto', id='descripcion')
+      .form-group
+        label(for='tipo') Tipo
+        select.form-control(type='text', name='tipo', id='tipo')
+          option(value='utiles') Utiles Escolares
+          option(value='ropa') Ropa
+          option(value='trastes') Trastes
+          option(value='otros') Otros
+      .form-group
+        label(for='imagen') Imagen
+        input.form-control(type='file', name='imagen', id='imagen')
+      .form-group
+        label(for='fechaEntrada') Fecha de Registro
+        input.form-control(type='date', name='fechaEntrada', id='fechaEntrada')
+      .form-group.text-right
+        input.btn.btn-info(type='submit', value='Guardar')
