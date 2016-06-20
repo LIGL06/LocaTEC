@@ -1,0 +1,24 @@
+extend ../layout
+block content
+  .col-md-4.col-md-offset-4.text-left
+    h1 #{title} #[br] #[small _id: #{objeto._id}]
+    form(method='POST', action='/admin/#{objeto._id}?_method=put')
+      //- input(type='hidden', name='_method', value='put')
+      .form-group
+        label(for='objectid') Folio
+        input.form-control(type='number', name='objectid', placeholder='Folio de objeto', id='objetctid', value='#{objeto.id}')
+      .form-group
+        label(for='descripcion') Descripción
+        input.form-control(type='text', name='descripcion', placeholder='Decripción del Objeto', id='descripcion', value='#{objeto.description}')
+      .form-group
+        label(for='tipo') Tipo
+        select.form-control(type='text', name='tipo', id='tipo', value='#{objeto.type}')
+          option(value='utiles') Utiles Escolares
+          option(value='ropa') Ropa
+          option(value='trastes') Trastes
+          option(value='otros') Otros
+      .form-group
+        label(for='fechaEntrada') Fecha de Registro
+        input.form-control(type='date', name='fechaEntrada', id='fechaEntrada', value='#{objeto.fechaEntrada}')
+      .form-group.text-right
+        input.btn.btn-info(type='submit', value='Editar')

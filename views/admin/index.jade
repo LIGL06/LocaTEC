@@ -3,4 +3,23 @@ extends ../layout
 block content
   .container.main
     h1.text-center Bienvenido #[strong #{user.givenName}]
-      
+    p.medium Todos los objetos perdidos se listan debajo
+    table.table.table-stripped.table-responsive
+      thead
+        tr
+          th Id de Objeto
+          th Objeto
+          th Tipo
+          th Descripción
+          th Fecha de captura
+          th Acciones
+      each objeto in objetos
+        tr
+          td ID: #{objeto._id}
+          td Folio: #{objeto.id}
+          td #[a(href='./uploads/#{objeto.imagen}') Ver Imagen]
+          td #{objeto.type}
+          td #{objeto.description}
+          td #{objeto.fechaEntrada}
+          td #[a(href='/admin/editar/#{objeto._id}') Editar] #[a(href='/admin/eliminar/#{objeto._id}') Eliminar]
+          

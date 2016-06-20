@@ -3,9 +3,10 @@ var stormpath = require('express-stormpath');
 var multer = require('multer');
 var cloudinary = require('cloudinary');
 var Objeto  = require('../modelos/objetos').Objeto;
+var methodOverride = require('method-override');
 var storage = multer.diskStorage({
   destination: function(req,file,cb){
-    cb(null, 'uploads/')
+    cb(null, '/public/uploads/')
   },
   filename: function(req,file,cb){
     cb(null,file.fieldname + '-'+Date.now()+'.jpg')
@@ -13,6 +14,8 @@ var storage = multer.diskStorage({
 })
 var upload = multer({storage:storage})
 var router = express.Router();
+var app = express();
+app.use(methodOverride('_method'));
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
@@ -22,25 +25,74 @@ cloudinary.config({
 
 /* GET home page. */
 router.get('/', stormpath.loginRequired,function(req, res, next) {
-  res.render('admin/index', { title: 'Panel de administración' });
+  Objeto.find(function(error, documento){
+    Objeto.find(function(error, objeto){
+      if (error) {
+        console.log(error);
+      }
+      res.render('admin/index', {objetos:objeto, title: 'LocaTEC'})
+    })
+  })
 });
 router.get('/nuevo', stormpath.loginRequired,function(req, res, next) {
   res.render('admin/new', { title:'Agregar objeto' });
 });
-
-
-router.post('/nuevo',upload.single('imagen'), function(req, res, next) {
+router.get('/editar/:id',function(req, res, next){
+  var id_objeto = req.params.id;
+  Objeto.findOne({"_id":id_objeto}, function(error,objeto){
+    if (error) {
+      console.log(error);
+    }else {
+      // res.send(objeto);
+      res.render('admin/editar',{objeto:objeto,title: 'Editar objeto'})
+    }
+  })
+})
+router.put('/:id', function(req, res, next){
+  var id = req.params.id;
   var data = new Objeto({
     id: req.body.objectid,
     description: req.body.descripcion,
     type: req.body.tipo,
     fechaEntrada: req.body.fechaEntrada,
-    imagen: req.file.filename
   })
-  res.send(data)
-      data.save(function(error){
-        console.log(data);
-      })
+  Objeto.update({"id":id, "description":description,"type":type, "fechaEntrada":fechaEntrada},data, function(error,objeto){
+    if (error) {
+      res.send(error);
+    }else {
+      res.send(data);
+    }
+  })
+})
+router.get('/eliminar/:id', function(req, res, next){
+  var id_objeto = req.params.id;
+  Objeto.findOne({"id":id_objeto}, function(error, objeto){
+    res.render('admin/eliminar',{objeto:objeto, title:'Eliminar objeto'})
+  })
+})
+router.delete('/:id', function(req, res, next){
+  var id = req.params.id;
+  Objeto.remove({"id":id}, function(error){
+    if (error) {
+      res.send(error);
+    }else {
+      res.redirect('/admin')
+    }
+  })
+})
+
+router.post('/nuevo', function(req, res, next) {
+  var data = new Objeto({
+    id: req.body.objectid,
+    description: req.body.descripcion,
+    type: req.body.tipo,
+    fechaEntrada: req.body.fechaEntrada,
+  })
+  if (req.file) {
+    data.imagen.data = fs.readFileSync(req.file.path);
+  }else {
+    data.imagen.data = fs.readFileSync('./public/uploads/default.png')
+  }
 })
 
 module.exports = router;

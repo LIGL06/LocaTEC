@@ -4,7 +4,7 @@ block content
   .container.main
     h1.text-center= title
     p.medium Todos los objetos perdidos se listan debajo
-    table.table.table-stripped.table-responsive
+    table.table.table-stripped.table-responsive.text-left
       thead
         tr
           th Objeto
@@ -13,7 +13,7 @@ block content
           th Fecha de captura
       each objeto in objetos
         tr
-          th Folio: #{objeto.id} #[p #{objeto.imagen}]
-          th #{objeto.type}
-          th #{objeto.description}
-          th #{objeto.fechaEntrada}
+          td #[img.col-xs-12.col-md-5.jumbotron(src='./uploads/#{objeto.imagen}')]
+          td #{objeto.type}
+          td #{objeto.description}
+          td #{objeto.fechaEntrada}
