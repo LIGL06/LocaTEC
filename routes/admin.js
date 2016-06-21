@@ -5,6 +5,7 @@ var cloudinary = require('cloudinary');
 var Objeto  = require('../modelos/objetos').Objeto;
 var fs = require('fs');
 var methodOverride = require('method-override');
+var default_avatar = 'defualt.png';
 var storage = multer.diskStorage({
   destination: function(req,file,cb){
     cb(null, 'uploads/')
@@ -25,7 +26,7 @@ cloudinary.config({
 })
 
 /* GET home page. */
-router.get('/', stormpath.loginRequired,function(req, res, next) {
+router.get('/',stormpath.loginRequired,function(req, res, next) {
   Objeto.find(function(error, documento){
     Objeto.find(function(error, objeto){
       if (error) {
@@ -38,7 +39,7 @@ router.get('/', stormpath.loginRequired,function(req, res, next) {
 router.get('/nuevo', stormpath.loginRequired,function(req, res, next) {
   res.render('admin/new', { title:'Agregar objeto' });
 });
-router.get('/editar/:id',function(req, res, next){
+router.get('/editar/:id',stormpath.loginRequired,function(req, res, next){
   var id_objeto = req.params.id;
   Objeto.findOne({"_id":id_objeto}, function(error,objeto){
     if (error) {
@@ -49,7 +50,7 @@ router.get('/editar/:id',function(req, res, next){
     }
   })
 })
-router.put('/:id', function(req, res, next){
+router.put('/:id',stormpath.loginRequired,function(req, res, next){
   var id = req.params.id;
   var data = new Objeto({
     id: req.body.objectid,
@@ -65,13 +66,13 @@ router.put('/:id', function(req, res, next){
     }
   })
 })
-router.get('/eliminar/:id', function(req, res, next){
+router.get('/eliminar/:id', stormpath.loginRequired,function(req, res, next){
   var id_objeto = req.params.id;
   Objeto.findOne({"id":id_objeto}, function(error, objeto){
     res.render('admin/eliminar',{objeto:objeto, title:'Eliminar objeto'})
   })
 })
-router.delete('/:id', function(req, res, next){
+router.delete('/:id',stormpath.loginRequired, function(req, res, next){
   var id = req.params.id;
   Objeto.remove({"id":id}, function(error){
     if (error) {
@@ -82,7 +83,7 @@ router.delete('/:id', function(req, res, next){
   })
 })
 
-router.post('/nuevo', upload.single('imagen'), function(req, res, next) {
+router.post('/nuevo',stormpath.loginRequired, upload.single('imagen'), function(req, res, next) {
   var data = new Objeto({
     id: req.body.objectid,
     description: req.body.descripcion,
@@ -90,18 +91,17 @@ router.post('/nuevo', upload.single('imagen'), function(req, res, next) {
     fechaEntrada: req.body.fechaEntrada,
   })
   if (req.file) {
-    data.imagen.data = req.file.path;
+    data.imagen = req.file.path;
   }else{
-    data.imagen.data = avatar;
+    data.imagen = default_avatar;
   }
-  res.send(data)
-  // data.save(function(error,objeto){
-  //   if (error) {
-  //     res.send(error);
-  //   }else {
-  //     res.redirect('/');
-  //   }
-  // })
+  data.save(function(error,objeto){
+    if (error) {
+      res.send(error);
+    }else {
+      res.redirect('/admin/nuevo');
+    }
+  })
 })
 
 module.exports = router;

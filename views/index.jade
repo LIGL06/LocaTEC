@@ -4,16 +4,23 @@ block content
   .container.main
     h1.text-center= title
     p.medium Todos los objetos perdidos se listan debajo
+    ol #[strong Filtrar por:]
+      li(style='display:inline-block') #[a(href="/utiles") Utiles Escolares]
+      li(style='display:inline-block') #[a(href="/ropa") Ropa]
+      li(style='display:inline-block') #[a(href="/trastes") Trastes]
+      li(style='display:inline-block') #[a(href="/otros") Otros]
     table.table.table-stripped.table-responsive.text-left
       thead
         tr
           th Objeto
+          th Folio
           th Tipo
           th Descripción
           th Fecha de captura
       each objeto in objetos
         tr
-          td #[img.col-xs-12.col-md-5.jumbotron(src='./uploads/#{objeto.imagen}')]
+          td #[img.col-xs-3.col-md-3.img-thumbnail(src='./uploads/#{objeto.imagen}')]
+          td #{objeto.id}
           td #{objeto.type}
           td #{objeto.description}
           td #{objeto.fechaEntrada}

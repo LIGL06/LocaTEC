@@ -12,5 +12,17 @@ router.get('/', function(req, res, next) {
     res.render('index', {objetos:objeto, title: 'LocaTEC'})
   })
 });
+router.get('/filter/:id',function(req, res, next){
+  if((id=="utiles")||(id=="trastes")){
+	  var id = req.params.id;
+	  Objeto.find({"type":id},function(error, objeto){
+	    if (error) {
+	        res.send(error);
+	    }else{
+	        res.render('index',{objetos:objeto, title: 'Filtrado por ' + id})
+	    }
+	  })
+	}
+})
 
 module.exports = router;
