@@ -8,7 +8,7 @@ var methodOverride = require('method-override');
 var default_avatar = 'defualt.png';
 var storage = multer.diskStorage({
   destination: function(req,file,cb){
-    cb(null, 'uploads/')
+    cb(null, 'public/uploads')
   },
   filename: function(req,file,cb){
     cb(null,file.fieldname + '-'+Date.now()+'.jpg')
@@ -83,7 +83,7 @@ router.delete('/:id',stormpath.loginRequired, function(req, res, next){
   })
 })
 
-router.post('/nuevo',stormpath.loginRequired, upload.single('imagen'), function(req, res, next) {
+router.post('/nuevo',upload.single('imagen'),stormpath.loginRequired, function(req, res, next) {
   var data = new Objeto({
     id: req.body.objectid,
     description: req.body.descripcion,
@@ -91,7 +91,8 @@ router.post('/nuevo',stormpath.loginRequired, upload.single('imagen'), function(
     fechaEntrada: req.body.fechaEntrada,
   })
   if (req.file) {
-    data.imagen = req.file.path;
+    data.imagen = req.file.filename;
+    console.log(req.file.filename);
   }else{
     data.imagen = default_avatar;
   }
