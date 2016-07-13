@@ -51,30 +51,32 @@ router.get('/editar/:id',stormpath.loginRequired,function(req, res, next){
   })
 })
 router.put('/:id',stormpath.loginRequired,function(req, res, next){
-  var id = req.params.id;
+  var _id = req.params.id
   var data = new Objeto({
+    _id: _id,
     id: req.body.objectid,
     description: req.body.descripcion,
     type: req.body.tipo,
-    fechaEntrada: req.body.fechaEntrada,
+    fechaEntrada: req.body.fechaEntrada
   })
-  Objeto.update({"id":id, "description":description,"type":type, "fechaEntrada":fechaEntrada},data, function(error,objeto){
-    if (error) {
-      res.send(error);
-    }else {
-      res.send(data);
+  // res.send(data)
+  Objeto.findOneAndUpdate({"_id":_id},data,function(error,objeto){
+      if (error) {
+      res.send(error)
+      }else {
+      res.redirect('/admin')
     }
   })
 })
 router.get('/eliminar/:id', stormpath.loginRequired,function(req, res, next){
-  var id_objeto = req.params.id;
-  Objeto.findOne({"id":id_objeto}, function(error, objeto){
-    res.render('admin/eliminar',{objeto:objeto, title:'Eliminar objeto'})
+  var _id = req.params.id;
+  Objeto.findOne({"_id":_id}, function(error, objeto){
+    res.render('admin/eliminar',{objeto:objeto, title:'Eliminar objeto', message:'Eliminar Objeto'})
   })
 })
 router.delete('/:id',stormpath.loginRequired, function(req, res, next){
-  var id = req.params.id;
-  Objeto.remove({"id":id}, function(error){
+  var _id = req.params.id;
+  Objeto.findAndRemove({"_id":_id}, function(error){
     if (error) {
       res.send(error);
     }else {

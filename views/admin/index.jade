@@ -9,6 +9,7 @@ block content
         tr
           th Id de Objeto
           th Objeto
+          th Imagen
           th Tipo
           th Descripción
           th Fecha de captura
@@ -17,9 +18,8 @@ block content
         tr
           td ID: #{objeto._id}
           td Folio: #{objeto.id}
-          td #[a(href='./uploads/#{objeto.imagen}') Ver Imagen]
+          td #[a(href='../uploads/#{objeto.imagen}', target='_blank') Ver Imagen]
           td #{objeto.type}
           td #{objeto.description}
           td #{objeto.fechaEntrada}
           td #[a(href='/admin/editar/#{objeto._id}') Editar] #[a(href='/admin/eliminar/#{objeto._id}') Eliminar]
-          
